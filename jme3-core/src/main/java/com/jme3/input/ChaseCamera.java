@@ -34,7 +34,6 @@ package com.jme3.input;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
-import com.jme3.export.OutputCapsule;
 import com.jme3.input.controls.*;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -386,141 +385,166 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * Updates the camera, should only be called internally
      */
     protected void updateCamera(float tpf) {
-        if (enabled) {
-            targetLocation.set(target.getWorldTranslation()).addLocal(lookAtOffset);
-            if (smoothMotion) {
+        if (!enabled) return;
 
-                //computation of target direction
-                targetDir.set(targetLocation).subtractLocal(prevPos);
-                float dist = targetDir.length();
+        targetLocation.set(target.getWorldTranslation()).addLocal(lookAtOffset);
+        if (smoothMotion) {
+            handleSmoothMotion(tpf);
+        } else {
+            handleEasyMotion();
+        }
+        prevPos.set(targetLocation);
+        //the cam looks at the target
+        cam.lookAt(targetLocation, initialUpVec);
+    }
 
-                //Low pass filtering on the target postition to avoid shaking when physics are enabled.
-                if (offsetDistance < dist) {
-                    //target moves, start chasing.
-                    chasing = true;
-                    //target moves, start trailing if it has to.
-                    if (trailingEnabled) {
-                        trailing = true;
-                    }
-                    //target moves...
-                    targetMoves = true;
-                } else {
-                    //if target was moving, we compute a slight offset in rotation to avoid a rought stop of the cam
-                    //We do not if the player is rotationg the cam
-                    if (targetMoves && !canRotate) {
-                        if (targetRotation - rotation > trailingRotationInertia) {
-                            targetRotation = rotation + trailingRotationInertia;
-                        } else if (targetRotation - rotation < -trailingRotationInertia) {
-                            targetRotation = rotation - trailingRotationInertia;
-                        }
-                    }
-                    //Target stops
-                    targetMoves = false;
-                }
+    private void handleEasyMotion() {
+        vRotation = targetVRotation;
+        rotation = targetRotation;
+        distance = targetDistance;
+        computePosition();
+        cam.setLocation(pos.addLocal(lookAtOffset));
+    }
 
-                //the user is rotating the cam by dragging the mouse
-                if (canRotate) {
-                    //reseting the trailing lerp factor
-                    trailingLerpFactor = 0;
-                    //stop trailing user has the control
-                    trailing = false;
-                }
+    private boolean targetIsMoving(float dist) {
+        return offsetDistance < dist;
+    }
 
+    private void handleSmoothMotion(float tpf) {
+        //computation of target direction
+        targetDir.set(targetLocation).subtractLocal(prevPos);
+        float dist = targetDir.length();
 
-                if (trailingEnabled && trailing) {
-                    if (targetMoves) {
-                        //computation if the inverted direction of the target
-                        Vector3f a = targetDir.negate().normalizeLocal();
-                        //the x unit vector
-                        Vector3f b = Vector3f.UNIT_X;
-                        //2d is good enough
-                        a.y = 0;
-                        //computation of the rotation angle between the x axis and the trail
-                        if (targetDir.z > 0) {
-                            targetRotation = FastMath.TWO_PI - FastMath.acos(a.dot(b));
-                        } else {
-                            targetRotation = FastMath.acos(a.dot(b));
-                        }
-                        if (targetRotation - rotation > FastMath.PI || targetRotation - rotation < -FastMath.PI) {
-                            targetRotation -= FastMath.TWO_PI;
-                        }
+        if (targetIsMoving(dist)) {
+            handleMovement();
+        } else {
+            handleStop();
+        }
 
-                        //if there is an important change in the direction while trailing reset of the lerp factor to avoid jumpy movements
-                        if (targetRotation != previousTargetRotation && FastMath.abs(targetRotation - previousTargetRotation) > FastMath.PI / 8) {
-                            trailingLerpFactor = 0;
-                        }
-                        previousTargetRotation = targetRotation;
-                    }
-                    //computing lerp factor
-                    trailingLerpFactor = Math.min(trailingLerpFactor + tpf * tpf * trailingSensitivity, 1);
-                    //computing rotation by linear interpolation
-                    rotation = FastMath.interpolateLinear(trailingLerpFactor, rotation, targetRotation);
+        handleUserRotation();
+        handleTrailing(tpf);
+        handleInterpolation(tpf);
+        computePosition();
+        //setting the position at last
+        cam.setLocation(pos.addLocal(lookAtOffset));
+    }
 
-                    //if the rotation is near the target rotation we're good, that's over
-                    if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
-                        trailing = false;
-                        trailingLerpFactor = 0;
-                    }
-                }
+    private void handleStop() {
+        avoidRoughStop();
+        targetMoves = false;
+    }
 
-                //linear interpolation of the distance while chasing
-                if (chasing) {
-                    distance = temp.set(targetLocation).subtractLocal(cam.getLocation()).length();
-                    distanceLerpFactor = Math.min(distanceLerpFactor + (tpf * tpf * chasingSensitivity * 0.05f), 1);
-                    distance = FastMath.interpolateLinear(distanceLerpFactor, distance, targetDistance);
-                    if (targetDistance + 0.01f >= distance && targetDistance - 0.01f <= distance) {
-                        distanceLerpFactor = 0;
-                        chasing = false;
-                    }
-                }
+    private void handleMovement() {
+        chasing = true;
+        trailing = trailingEnabled || trailing;
+        targetMoves = true;
+    }
 
-                //linear interpolation of the distance while zooming
-                if (zooming) {
-                    distanceLerpFactor = Math.min(distanceLerpFactor + (tpf * tpf * zoomSensitivity), 1);
-                    distance = FastMath.interpolateLinear(distanceLerpFactor, distance, targetDistance);
-                    if (targetDistance + 0.1f >= distance && targetDistance - 0.1f <= distance) {
-                        zooming = false;
-                        distanceLerpFactor = 0;
-                    }
-                }
+    private void avoidRoughStop() {
+        float difference = targetRotation - rotation;
+        if (Math.abs(difference) < trailingRotationInertia) return;
+        if (difference > 0) {
+            targetRotation = rotation + trailingRotationInertia;
+            return;
+        }
+        targetRotation = rotation - trailingRotationInertia;
+    }
 
-                //linear interpolation of the rotation while rotating horizontally
-                if (rotating) {
-                    rotationLerpFactor = Math.min(rotationLerpFactor + tpf * tpf * rotationSensitivity, 1);
-                    rotation = FastMath.interpolateLinear(rotationLerpFactor, rotation, targetRotation);
-                    if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
-                        rotating = false;
-                        rotationLerpFactor = 0;
-                    }
-                }
+    private void handleInterpolation(float tpf) {
+        handleDistanceWhileChasing(tpf);
+        handleDistanceWhileZooming(tpf);
+        handleHorizontalRotation(tpf);
+        handleVerticalRotation(tpf);
+    }
 
-                //linear interpolation of the rotation while rotating vertically
-                if (vRotating) {
-                    vRotationLerpFactor = Math.min(vRotationLerpFactor + tpf * tpf * rotationSensitivity, 1);
-                    vRotation = FastMath.interpolateLinear(vRotationLerpFactor, vRotation, targetVRotation);
-                    if (targetVRotation + 0.01f >= vRotation && targetVRotation - 0.01f <= vRotation) {
-                        vRotating = false;
-                        vRotationLerpFactor = 0;
-                    }
-                }
-                //computing the position
-                computePosition();
-                //setting the position at last
-                cam.setLocation(pos.addLocal(lookAtOffset));
-            } else {
-                //easy no smooth motion
-                vRotation = targetVRotation;
-                rotation = targetRotation;
-                distance = targetDistance;
-                computePosition();
-                cam.setLocation(pos.addLocal(lookAtOffset));
-            }
-            //keeping track on the previous position of the target
-            prevPos.set(targetLocation);
+    private void handleTrailing(float tpf) {
+        if (!(trailingEnabled && trailing)) return;
+        handleTrailingForMovingTarget();
+        trailingLerpFactor = Math.min(trailingLerpFactor + tpf * tpf * trailingSensitivity, 1);
+        rotation = FastMath.interpolateLinear(trailingLerpFactor, rotation, targetRotation);
 
-            //the cam looks at the target
-            cam.lookAt(targetLocation, initialUpVec);
+        //if the rotation is near the target rotation we're good, that's over
+        if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
+            trailing = false;
+            trailingLerpFactor = 0;
+        }
+    }
 
+    private void handleTrailingForMovingTarget() {
+        if (!targetMoves) return;
+        //computation if the inverted direction of the target
+        Vector3f a = targetDir.negate().normalizeLocal();
+        //the x unit vector
+        Vector3f b = Vector3f.UNIT_X;
+        //2d is good enough
+        a.y = 0;
+        calculateTargetRotation(a, b);
+        calculateTrailingLerpFactor();
+        previousTargetRotation = targetRotation;
+}
+
+    private void calculateTrailingLerpFactor() {
+        if (targetRotation != previousTargetRotation && FastMath.abs(targetRotation - previousTargetRotation) > FastMath.PI / 8) {
+            trailingLerpFactor = 0;
+        }
+    }
+
+    private void calculateTargetRotation(Vector3f a, Vector3f b) {
+        //computation of the rotation angle between the x axis and the trail
+        targetRotation = targetDir.z > 0 ? FastMath.TWO_PI - FastMath.acos(a.dot(b)) : FastMath.acos(a.dot(b));
+
+        float rotationDelta = targetRotation - rotation;
+        if (Math.abs(rotationDelta) > FastMath.PI) {
+            targetRotation -= FastMath.TWO_PI;
+        }
+    }
+
+    private void handleUserRotation() {
+        if (! canRotate) return;
+        //reseting the trailing lerp factor
+        trailingLerpFactor = 0;
+        //stop trailing user has the control
+        trailing = false;
+    }
+
+    private void handleVerticalRotation(float tpf) {
+        if (! vRotating) return;
+        vRotationLerpFactor = Math.min(vRotationLerpFactor + tpf * tpf * rotationSensitivity, 1);
+        vRotation = FastMath.interpolateLinear(vRotationLerpFactor, vRotation, targetVRotation);
+        if (targetVRotation + 0.01f >= vRotation && targetVRotation - 0.01f <= vRotation) {
+            vRotating = false;
+            vRotationLerpFactor = 0;
+        }
+    }
+
+    private void handleHorizontalRotation(float tpf) {
+        if (! rotating) return;
+        rotationLerpFactor = Math.min(rotationLerpFactor + tpf * tpf * rotationSensitivity, 1);
+        rotation = FastMath.interpolateLinear(rotationLerpFactor, rotation, targetRotation);
+        if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
+            rotating = false;
+            rotationLerpFactor = 0;
+        }
+    }
+
+    private void handleDistanceWhileZooming(float tpf) {
+        if (!zooming) return;
+        distanceLerpFactor = Math.min(distanceLerpFactor + (tpf * tpf * zoomSensitivity), 1);
+        distance = FastMath.interpolateLinear(distanceLerpFactor, distance, targetDistance);
+        if (targetDistance + 0.1f >= distance && targetDistance - 0.1f <= distance) {
+            zooming = false;
+            distanceLerpFactor = 0;
+        }
+    }
+
+    private void handleDistanceWhileChasing(float tpf) {
+        if (!chasing) return;
+        distance = temp.set(targetLocation).subtractLocal(cam.getLocation()).length();
+        distanceLerpFactor = Math.min(distanceLerpFactor + (tpf * tpf * chasingSensitivity * 0.05f), 1);
+        distance = FastMath.interpolateLinear(distanceLerpFactor, distance, targetDistance);
+        if (targetDistance + 0.01f >= distance && targetDistance - 0.01f <= distance) {
+            distanceLerpFactor = 0;
+            chasing = false;
         }
     }
 
