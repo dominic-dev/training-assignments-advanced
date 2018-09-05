@@ -149,7 +149,14 @@ public class Cylinder extends Mesh {
     public Cylinder(int axisSamples, int radialSamples,
             float radius, float radius2, float height, boolean closed, boolean inverted) {
         super();
-        updateGeometry(axisSamples, radialSamples, radius, radius2, height, closed, inverted);
+        this.axisSamples = axisSamples;
+        this.radialSamples = radialSamples;
+        this.radius = radius;
+        this.radius2 = radius2;
+        this.height = height;
+        this.closed = closed;
+        this.inverted = inverted;
+        updateGeometry();
     }
 
     /**
@@ -200,24 +207,8 @@ public class Cylinder extends Mesh {
 
     /**
      * Rebuilds the cylinder based on a new set of parameters.
-     *
-     * @param axisSamples the number of samples along the axis.
-     * @param radialSamples the number of samples around the radial.
-     * @param radius the radius of the bottom of the cylinder.
-     * @param radius2 the radius of the top of the cylinder.
-     * @param height the cylinder's height.
-     * @param closed should the cylinder have top and bottom surfaces.
-     * @param inverted is the cylinder is meant to be viewed from the inside.
      */
-    public void updateGeometry(int axisSamples, int radialSamples,
-            float radius, float radius2, float height, boolean closed, boolean inverted) {
-        this.axisSamples = axisSamples;
-        this.radialSamples = radialSamples;
-        this.radius = radius;
-        this.radius2 = radius2;
-        this.height = height;
-        this.closed = closed;
-        this.inverted = inverted;
+    public void updateGeometry() {
 
 //        VertexBuffer pvb = getBuffer(Type.Position);
 //        VertexBuffer nvb = getBuffer(Type.Normal);
@@ -236,7 +227,7 @@ public class Cylinder extends Mesh {
         setBuffer(Type.TexCoord, 2, createVector2Buffer(vertCount));
 
         int triCount = ((closed ? 2 : 0) + 2 * (axisSamples - 1)) * radialSamples;
-        
+
         setBuffer(Type.Index, 3, createShortBuffer(getShortBuffer(Type.Index), 3 * triCount));
 
         // generate geometry
