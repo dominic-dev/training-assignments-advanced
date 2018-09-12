@@ -31,8 +31,8 @@
  */
 package com.jme3.scene.debug;
 
-import com.jme3.scene.Mesh;
-import com.jme3.scene.Mesh.Mode;
+import com.jme3.scene.ConcreteMesh;
+import com.jme3.scene.mesh.Mode;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
@@ -43,7 +43,7 @@ import java.nio.ShortBuffer;
  * 
  * @author Kirill Vainer
  */
-public class Grid extends Mesh {
+public class Grid extends ConcreteMesh {
 
     /**
      * Creates a grid debug shape.

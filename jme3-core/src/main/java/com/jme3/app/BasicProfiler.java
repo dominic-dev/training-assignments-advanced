@@ -37,8 +37,9 @@ import com.jme3.profile.AppStep;
 import com.jme3.profile.VpStep;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
-import com.jme3.scene.Mesh;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.mesh.Mode;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
 
@@ -73,7 +74,7 @@ public class BasicProfiler implements AppProfiler {
     private long updateInterval = 1000000L; // once a millisecond
     private long lastUpdate = 0;
     
-    private Mesh mesh;
+    private ConcreteMesh mesh;
     
     public BasicProfiler() {
         this(1280);
@@ -122,14 +123,14 @@ public class BasicProfiler implements AppProfiler {
      *  Returns the mesh that contains the bar chart of tracked frame
      *  timings.
      */
-    public Mesh getMesh() {
+    public ConcreteMesh getMesh() {
         return mesh;
     }
 
     protected final void createMesh() {
         if( mesh == null ) {
-            mesh = new Mesh();
-            mesh.setMode(Mesh.Mode.Lines);
+            mesh = new ConcreteMesh();
+            mesh.setMode(Mode.Lines);
         }
         
         mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(size * 4 * 3));

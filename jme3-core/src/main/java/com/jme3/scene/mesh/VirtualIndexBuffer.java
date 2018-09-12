@@ -31,7 +31,6 @@
  */
 package com.jme3.scene.mesh;
 
-import com.jme3.scene.Mesh.Mode;
 import java.nio.Buffer;
 
 /**

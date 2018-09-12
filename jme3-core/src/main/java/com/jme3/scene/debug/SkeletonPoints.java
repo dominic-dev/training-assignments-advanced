@@ -34,11 +34,12 @@ package com.jme3.scene.debug;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Mesh;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
+import com.jme3.scene.mesh.Mode;
 import com.jme3.util.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -47,7 +48,7 @@ import java.util.Map;
 /**
  * The class that displays either heads of the bones if no length data is supplied or both heads and tails otherwise.
  */
-public class SkeletonPoints extends Mesh {
+public class SkeletonPoints extends ConcreteMesh {
     /** The skeleton to be displayed. */
     private Skeleton            skeleton;
     /** The map between the bone index and its length. */

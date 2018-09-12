@@ -5,7 +5,7 @@
  */
 package com.jme3.util.mikktspace;
 
-import com.jme3.scene.Mesh;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.BufferUtils;
@@ -17,9 +17,9 @@ import java.nio.FloatBuffer;
  */
 public class MikkTSpaceImpl implements MikkTSpaceContext {
 
-    Mesh mesh;
+    ConcreteMesh mesh;
 
-    public MikkTSpaceImpl(Mesh mesh) {
+    public MikkTSpaceImpl(ConcreteMesh mesh) {
         this.mesh = mesh;
         VertexBuffer tangentBuffer = mesh.getBuffer(VertexBuffer.Type.Tangent);
         if(tangentBuffer == null){

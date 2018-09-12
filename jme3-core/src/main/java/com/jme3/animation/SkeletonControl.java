@@ -52,7 +52,6 @@ import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -125,8 +124,9 @@ public class SkeletonControl extends AbstractControl implements Cloneable, JmeCl
             m.setInt("NumberOfBones", numBones);
         }
         for (Mesh mesh : targets) {
-            if (mesh.isAnimated()) {
-                mesh.prepareForAnim(false);
+            ConcreteMesh concreteMesh = (ConcreteMesh) mesh;
+            if (concreteMesh.isAnimated()) {
+                concreteMesh.prepareForAnim(false);
             }
         }
     }
@@ -138,8 +138,9 @@ public class SkeletonControl extends AbstractControl implements Cloneable, JmeCl
             }
         }
         for (Mesh mesh : targets) {
-            if (mesh.isAnimated()) {
-                mesh.prepareForAnim(true);
+            ConcreteMesh concreteMesh = (ConcreteMesh) mesh;
+            if (concreteMesh.isAnimated()) {
+                concreteMesh.prepareForAnim(true);
             }
         }
     }
@@ -214,7 +215,7 @@ public class SkeletonControl extends AbstractControl implements Cloneable, JmeCl
         for (Spatial child : node.getChildren()) {
             if (child instanceof Geometry) {
                 Geometry geom = (Geometry) child;
-                Mesh mesh = geom.getMesh();
+                ConcreteMesh mesh = geom.getMesh();
                 if (mesh.isAnimated()) {
                     targets.add(mesh);
                     materials.add(geom.getMaterial());
@@ -314,11 +315,12 @@ public class SkeletonControl extends AbstractControl implements Cloneable, JmeCl
     //only do this for software updates
     void resetToBind() {
         for (Mesh mesh : targets) {
-            if (mesh.isAnimated()) {
+            ConcreteMesh concreteMesh = (ConcreteMesh) mesh;
+            if (concreteMesh.isAnimated()) {
                 Buffer bwBuff = mesh.getBuffer(Type.BoneWeight).getData();
                 Buffer biBuff = mesh.getBuffer(Type.BoneIndex).getData();
                 if (!biBuff.hasArray() || !bwBuff.hasArray()) {
-                    mesh.prepareForAnim(true); // prepare for software animation
+                    concreteMesh.prepareForAnim(true); // prepare for software animation
                 }
                 VertexBuffer bindPos = mesh.getBuffer(Type.BindPosePosition);
                 VertexBuffer bindNorm = mesh.getBuffer(Type.BindPoseNormal);
@@ -599,7 +601,6 @@ public class SkeletonControl extends AbstractControl implements Cloneable, JmeCl
      * has additional indexes since tangent has 4 components instead of 3 for
      * pos and norm
      *
-     * @param maxWeightsPerVert maximum number of weights per vertex
      * @param mesh the mesh
      * @param offsetMatrices the offsetMaytrices to apply
      * @param tb the tangent vertexBuffer

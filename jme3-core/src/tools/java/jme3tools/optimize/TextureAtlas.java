@@ -36,10 +36,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.MatParamTexture;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.*;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.texture.Image;
 import com.jme3.texture.Image.Format;
@@ -496,7 +493,7 @@ public class TextureAtlas {
             return null;
         }
         Geometry geom = new Geometry();
-        Mesh mesh = new Mesh();
+        ConcreteMesh mesh = new ConcreteMesh();
         GeometryBatchFactory.mergeGeometries(geometries, mesh);
         applyAtlasCoords(geometries, mesh, atlas);
         mesh.updateCounts();

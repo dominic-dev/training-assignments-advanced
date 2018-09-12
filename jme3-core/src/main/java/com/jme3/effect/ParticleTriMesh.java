@@ -38,6 +38,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Usage;
+import com.jme3.scene.mesh.Mode;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.TempVars;
 import java.nio.ByteBuffer;

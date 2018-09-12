@@ -39,6 +39,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -183,7 +184,7 @@ public class BasicProfilerState extends BaseAppState {
         graph.setLocalTranslation(0, 300, 0);
         graph.setLocalScale(1, scale, 1);
                
-        Mesh mesh = new Mesh();
+        ConcreteMesh mesh = new ConcreteMesh();
         background = new Geometry("profiler.background", mesh);
         mat = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setBoolean("VertexColor", true);

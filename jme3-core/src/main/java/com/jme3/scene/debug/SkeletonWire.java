@@ -38,18 +38,19 @@ import java.util.Map;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Mesh;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
+import com.jme3.scene.mesh.Mode;
 import com.jme3.util.BufferUtils;
 
 /**
  * The class that displays either wires between the bones' heads if no length data is supplied and
  * full bones' shapes otherwise.
  */
-public class SkeletonWire extends Mesh {
+public class SkeletonWire extends ConcreteMesh {
     /** The number of bones' connections. Used in non-length mode. */
     private int                 numConnections;
     /** The skeleton to be displayed. */

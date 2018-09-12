@@ -32,14 +32,15 @@
 package com.jme3.scene.debug;
 
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Mesh;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
+import com.jme3.scene.mesh.Mode;
 import com.jme3.util.BufferUtils;
 import java.nio.FloatBuffer;
 
-public class WireFrustum extends Mesh {
+public class WireFrustum extends ConcreteMesh {
 
     public WireFrustum(Vector3f[] points){
         if (points != null)

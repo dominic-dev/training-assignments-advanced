@@ -37,11 +37,12 @@ import java.util.Map;
 import com.jme3.animation.Bone;
 import com.jme3.animation.Skeleton;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Mesh;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
+import com.jme3.scene.mesh.Mode;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -49,7 +50,7 @@ import com.jme3.util.BufferUtils;
  * 
  * @author Marcin Roguski (Kaelthas)
  */
-public class SkeletonInterBoneWire extends Mesh {
+public class SkeletonInterBoneWire extends ConcreteMesh {
     private static final int    POINT_AMOUNT = 10;
     /** The amount of connections between bones. */
     private int                 connectionsAmount;

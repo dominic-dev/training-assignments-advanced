@@ -33,7 +33,7 @@ package com.jme3.renderer;
 
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
-import com.jme3.scene.Mesh;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.shader.Shader;
 import com.jme3.texture.FrameBuffer;
@@ -86,7 +86,7 @@ public class RenderContext {
     public float polyOffsetUnits = 0;
 
     /**
-     * @see Mesh#setPointSize(float) 
+     * @see ConcreteMesh#setPointSize(float)
      */
     public float pointSize = 1;
     
@@ -167,20 +167,14 @@ public class RenderContext {
     /**
      * Currently bound element array vertex buffer.
      * 
-     * @see Renderer#renderMesh(com.jme3.scene.Mesh, int, int) 
-     */
     public int boundElementArrayVBO;
 
     /**
-     * @see Renderer#renderMesh(com.jme3.scene.Mesh, int, int) 
-     */
     public int boundVertexArray;
 
     /**
      * Currently bound array vertex buffer.
      * 
-     * @see Renderer#renderMesh(com.jme3.scene.Mesh, int, int) 
-     */
     public int boundArrayVBO;
     
     /**
@@ -274,9 +268,6 @@ public class RenderContext {
         boundRB = 0;
         boundDrawBuf = -1; 
         boundReadBuf = -1;
-        boundElementArrayVBO = 0;
-        boundVertexArray = 0;
-        boundArrayVBO = 0;
         boundPixelPackPBO = 0;
         numTexturesSet = 0;
         for (int i = 0; i < boundTextures.length; i++)

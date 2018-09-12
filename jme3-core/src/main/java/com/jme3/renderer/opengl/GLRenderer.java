@@ -63,8 +63,9 @@ import com.jme3.renderer.RenderContext;
 import com.jme3.renderer.Renderer;
 import com.jme3.renderer.RendererException;
 import com.jme3.renderer.Statistics;
+import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Mesh.Mode;
+import com.jme3.scene.mesh.Mode;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
@@ -2563,7 +2564,7 @@ public final class GLRenderer implements Renderer {
         setVertexAttrib(vb, null);
     }
 
-    public void drawTriangleArray(Mesh.Mode mode, int count, int vertCount) {
+    public void drawTriangleArray(Mode mode, int count, int vertCount) {
         boolean useInstancing = count > 1 && caps.contains(Caps.MeshInstancing);
         if (useInstancing) {
             glext.glDrawArraysInstancedARB(convertElementMode(mode), 0,
@@ -2573,7 +2574,7 @@ public final class GLRenderer implements Renderer {
         }
     }
 
-    public void drawTriangleList(VertexBuffer indexBuf, Mesh mesh, int count) {
+    public void drawTriangleList(VertexBuffer indexBuf, ConcreteMesh mesh, int count) {
         if (indexBuf.getBufferType() != VertexBuffer.Type.Index) {
             throw new IllegalArgumentException("Only index buffers are allowed as triangle lists.");
         }
@@ -2668,7 +2669,7 @@ public final class GLRenderer implements Renderer {
     /*********************************************************************\
      |* Render Calls                                                      *|
      \*********************************************************************/
-    public int convertElementMode(Mesh.Mode mode) {
+    public int convertElementMode(Mode mode) {
         switch (mode) {
             case Points:
                 return GL.GL_POINTS;
@@ -2731,7 +2732,7 @@ public final class GLRenderer implements Renderer {
         }
     }
 
-    private void renderMeshVertexArray(Mesh mesh, int lod, int count, VertexBuffer instanceData) {
+    private void renderMeshVertexArray(ConcreteMesh mesh, int lod, int count, VertexBuffer instanceData) {
         if (mesh.getId() == -1) {
             updateVertexArray(mesh, instanceData);
         } else {
@@ -2758,7 +2759,7 @@ public final class GLRenderer implements Renderer {
         clearVertexAttribs();
     }
 
-    private void renderMeshDefault(Mesh mesh, int lod, int count, VertexBuffer[] instanceData) {
+    private void renderMeshDefault(ConcreteMesh mesh, int lod, int count, VertexBuffer[] instanceData) {
 
         // Here while count is still passed in.  Can be removed when/if
         // the method is collapsed again.  -pspeed        
@@ -2807,7 +2808,7 @@ public final class GLRenderer implements Renderer {
         }
     }
 
-    public void renderMesh(Mesh mesh, int lod, int count, VertexBuffer[] instanceData) {
+    public void renderMesh(ConcreteMesh mesh, int lod, int count, VertexBuffer[] instanceData) {
         if (mesh.getVertexCount() == 0 || mesh.getTriangleCount() == 0 || count == 0) {
             return;
         }
