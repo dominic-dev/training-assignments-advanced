@@ -31,9 +31,10 @@
  */
 package com.jme3.effect;
 
+import com.jme3.material.RenderState;
 import com.jme3.math.Matrix3f;
 import com.jme3.renderer.Camera;
-import com.jme3.scene.ConcreteMesh;
+import com.jme3.scene.Mesh;
 
 /**
  * The <code>ParticleMesh</code> is the underlying visual implementation of a 
@@ -41,7 +42,7 @@ import com.jme3.scene.ConcreteMesh;
  * 
  * @author Kirill Vainer
  */
-public abstract class ParticleMesh extends ConcreteMesh {
+public abstract class ParticleMesh extends Mesh {
 
     /**
      * Type of particle mesh

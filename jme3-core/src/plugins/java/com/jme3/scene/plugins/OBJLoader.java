@@ -38,7 +38,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.*;
-import com.jme3.scene.mesh.Mode;
+import com.jme3.scene.Mesh.Mode;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.scene.mesh.IndexIntBuffer;
@@ -403,7 +403,7 @@ public final class OBJLoader implements AssetLoader {
             throw new IOException("No geometry data to generate mesh");
 
         // Create mesh from the faces
-        ConcreteMesh mesh = constructMesh(faceList);
+        Mesh mesh = constructMesh(faceList);
         
         Geometry geom = new Geometry(objName + "-geom-" + (geomIndex++), mesh);
         
@@ -432,8 +432,8 @@ public final class OBJLoader implements AssetLoader {
         return geom;
     }
 
-    protected ConcreteMesh constructMesh(ArrayList<Face> faceList){
-        ConcreteMesh m = new ConcreteMesh();
+    protected Mesh constructMesh(ArrayList<Face> faceList){
+        Mesh m = new Mesh();
         m.setMode(Mode.Triangles);
 
         boolean hasTexCoord = false;

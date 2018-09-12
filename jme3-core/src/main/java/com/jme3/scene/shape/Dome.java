@@ -38,7 +38,7 @@ import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.ConcreteMesh;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.TempVars;
@@ -53,7 +53,7 @@ import java.nio.ShortBuffer;
  * @author Joshua Slack (Original sphere code that was adapted)
  * @version $Revision: 4131 $, $Date: 2009-03-19 16:15:28 -0400 (Thu, 19 Mar 2009) $
  */
-public class Dome extends ConcreteMesh {
+public class Dome extends Mesh {
 
     private int planes;
     private int radialSamples;
@@ -80,6 +80,7 @@ public class Dome extends ConcreteMesh {
      *            Influences how round the base of the dome is.
      * @param radius
      *            Radius of the dome.
+     * @see #Dome(com.jme.math.Vector3f, int, int, float)
      */
     public Dome(int planes, int radialSamples, float radius) {
         this(new Vector3f(0, 0, 0), planes, radialSamples, radius);

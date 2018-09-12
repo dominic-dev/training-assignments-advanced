@@ -32,9 +32,7 @@
 package com.jme3.material;
 
 import com.jme3.export.*;
-import com.jme3.scene.ConcreteMesh;
-import com.jme3.scene.mesh.Mode;
-
+import com.jme3.scene.Mesh;
 import java.io.IOException;
 
 /**
@@ -878,7 +876,7 @@ public class RenderState implements Cloneable, Savable {
     /**
      * Enables wireframe rendering mode.
      *
-     * <p>When in wireframe mode, {@link ConcreteMesh meshes} rendered in triangle mode
+     * <p>When in wireframe mode, {@link Mesh meshes} rendered in triangle mode
      * will not be solid, but instead, only the edges of the triangles
      * will be rendered.
      *
@@ -985,7 +983,7 @@ public class RenderState implements Cloneable, Savable {
 
     /**
      * Sets the mesh line width.
-     * This is to use in conjunction with {@link #setWireframe(boolean)} or with a mesh in {@link Mode#Lines} mode.
+     * This is to use in conjunction with {@link #setWireframe(boolean)} or with a mesh in {@link Mesh.Mode#Lines} mode.
      * @param lineWidth the line width.
      */
     public void setLineWidth(float lineWidth) {

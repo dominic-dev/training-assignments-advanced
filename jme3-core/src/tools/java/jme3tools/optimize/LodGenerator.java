@@ -49,7 +49,6 @@ package jme3tools.optimize;
 
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.ConcreteMesh;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
@@ -109,7 +108,7 @@ public class LodGenerator {
     private List<Triangle> triangleList;
     private List<Vertex> vertexList = new ArrayList<Vertex>();
     private float meshBoundingSphereRadius;
-    private ConcreteMesh mesh;
+    private Mesh mesh;
 
     /**
      * Describe the way triangles will be removed. <br> PROPORTIONAL :

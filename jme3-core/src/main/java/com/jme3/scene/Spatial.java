@@ -157,6 +157,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
     /**
      * Used for smart asset caching
      *
+     * @see AssetKey#useSmartCache()
      */
     protected AssetKey key;
     /**
@@ -1334,7 +1335,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      * Note that meshes of geometries are not cloned explicitly, they
      * are shared if static, or specially cloned if animated.
      *
-     * @see ConcreteMesh#cloneForAnim()
+     * @see Mesh#cloneForAnim()
      */
     public Spatial clone( boolean cloneMaterial ) {
 
@@ -1353,7 +1354,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
         // By default the meshes are not cloned.  The geometry
         // may choose to selectively force them to be cloned but
         // normally they will be shared
-        cloner.setCloneFunction(ConcreteMesh.class, new IdentityCloneFunction<ConcreteMesh>());
+        cloner.setCloneFunction(Mesh.class, new IdentityCloneFunction<Mesh>());
 
         // Clone it!
         Spatial clone = cloner.clone(this);
@@ -1440,7 +1441,7 @@ public abstract class Spatial implements Savable, Cloneable, Collidable, Cloneab
      * All controls will be cloned using the Control.cloneForSpatial method
      * on the clone.
      *
-     * @see ConcreteMesh#cloneForAnim()
+     * @see Mesh#cloneForAnim()
      */
     @Override
     public Spatial clone() {

@@ -36,9 +36,10 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.*;
+import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.VertexBuffer.Usage;
 import com.jme3.scene.mesh.IndexBuffer;
-import com.jme3.scene.mesh.Mode;
 
 import static com.jme3.util.BufferUtils.*;
 
@@ -126,7 +127,7 @@ public class TangentBinormalGenerator {
         return vertices;
     }
     
-    public static void generate(ConcreteMesh mesh) {
+    public static void generate(Mesh mesh) {
         generate(mesh, true, false);
     }
     
@@ -174,7 +175,7 @@ public class TangentBinormalGenerator {
             futures.add(executor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    generate((ConcreteMesh) m, true, false);
+                    generate(m, true, false);
                 }
             }));
         }
@@ -190,7 +191,7 @@ public class TangentBinormalGenerator {
     
     
     
-    public static void generate(ConcreteMesh mesh, boolean approxTangents, boolean splitMirrored) {
+    public static void generate(Mesh mesh, boolean approxTangents, boolean splitMirrored) {        
         int[] index = new int[3];
         Vector3f[] v = new Vector3f[3];
         Vector2f[] t = new Vector2f[3];
@@ -228,11 +229,11 @@ public class TangentBinormalGenerator {
         TangentUtils.generateBindPoseTangentsIfNecessary(mesh);
     }
     
-    public static void generate(ConcreteMesh mesh, boolean approxTangents) {
+    public static void generate(Mesh mesh, boolean approxTangents) {
         generate(mesh, approxTangents, false);
     }
 
-    private static  List<VertexData> processTriangles(ConcreteMesh mesh,
+    private static  List<VertexData> processTriangles(Mesh mesh,
             int[] index, Vector3f[] v, Vector2f[] t, boolean splitMirrored) {
         IndexBuffer indexBuffer = mesh.getIndexBuffer();
         FloatBuffer vertexBuffer = (FloatBuffer) mesh.getBuffer(Type.Position).getData();
@@ -439,7 +440,7 @@ public class TangentBinormalGenerator {
         }
     }
     
-    private static List<VertexData> processTriangleStrip(ConcreteMesh mesh,
+    private static List<VertexData> processTriangleStrip(Mesh mesh,
             int[] index, Vector3f[] v, Vector2f[] t) {
         IndexBuffer indexBuffer = mesh.getIndexBuffer();
         FloatBuffer vertexBuffer = (FloatBuffer) mesh.getBuffer(Type.Position).getData();
@@ -487,7 +488,7 @@ public class TangentBinormalGenerator {
         return vertices;
     }
     
-    private static List<VertexData> processTriangleFan(ConcreteMesh mesh,
+    private static List<VertexData> processTriangleFan(Mesh mesh,
             int[] index, Vector3f[] v, Vector2f[] t) {
         IndexBuffer indexBuffer = mesh.getIndexBuffer();
         FloatBuffer vertexBuffer = (FloatBuffer) mesh.getBuffer(Type.Position).getData();
@@ -670,8 +671,8 @@ public class TangentBinormalGenerator {
         return vertexMap;
     }
     
-    private static void processTriangleData(ConcreteMesh mesh, List<VertexData> vertices,
-                                            boolean approxTangent, boolean splitMirrored) {
+    private static void processTriangleData(Mesh mesh, List<VertexData> vertices,
+            boolean approxTangent, boolean splitMirrored) {
         ArrayList<VertexInfo> vertexMap = linkVertices(mesh,splitMirrored);
 
         FloatBuffer tangents = BufferUtils.createFloatBuffer(vertices.size() * 4);
@@ -894,8 +895,8 @@ public class TangentBinormalGenerator {
         ColorRGBA originColor = ColorRGBA.White;
         ColorRGBA normalColor = ColorRGBA.Blue;
         
-        Mesh lineMesh = new ConcreteMesh();
-        lineMesh.setMode(Mode.Lines);
+        Mesh lineMesh = new Mesh();
+        lineMesh.setMode(Mesh.Mode.Lines);
         
         Vector3f origin = new Vector3f();
         Vector3f point = new Vector3f();
@@ -941,8 +942,8 @@ public class TangentBinormalGenerator {
         ColorRGBA binormalColor = ColorRGBA.Green;
         ColorRGBA normalColor = ColorRGBA.Blue;
         
-        Mesh lineMesh = new ConcreteMesh();
-        lineMesh.setMode(Mode.Lines);
+        Mesh lineMesh = new Mesh();
+        lineMesh.setMode(Mesh.Mode.Lines);
         
         Vector3f origin = new Vector3f();
         Vector3f point = new Vector3f();

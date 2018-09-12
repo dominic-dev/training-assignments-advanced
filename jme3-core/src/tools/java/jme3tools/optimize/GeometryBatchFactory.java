@@ -5,7 +5,7 @@ import com.jme3.math.Matrix4f;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.*;
-import com.jme3.scene.mesh.Mode;
+import com.jme3.scene.Mesh.Mode;
 import com.jme3.scene.VertexBuffer.Format;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.VertexBuffer.Usage;
@@ -94,7 +94,7 @@ public class GeometryBatchFactory {
      * @param geometries
      * @param outMesh
      */
-    public static void mergeGeometries(Collection<Geometry> geometries, ConcreteMesh outMesh) {
+    public static void mergeGeometries(Collection<Geometry> geometries, Mesh outMesh) {
         int[] compsForBuf = new int[VertexBuffer.Type.values().length];
         Format[] formatForBuf = new Format[compsForBuf.length];
          boolean[] normForBuf = new boolean[VertexBuffer.Type.values().length];
@@ -188,7 +188,7 @@ public class GeometryBatchFactory {
         int globalTriIndex = 0;
 
         for (Geometry geom : geometries) {
-            ConcreteMesh inMesh = geom.getMesh();
+            Mesh inMesh = geom.getMesh();
             geom.computeWorldMatrix();
             Matrix4f worldMatrix = geom.getWorldMatrix();
 
@@ -238,7 +238,7 @@ public class GeometryBatchFactory {
         }
     }
 
-    public static void makeLods(Collection<Geometry> geometries, ConcreteMesh outMesh) {
+    public static void makeLods(Collection<Geometry> geometries, Mesh outMesh) {
         // Determine number of LOD levels required.
         int lodLevels = Integer.MAX_VALUE;
         for (Geometry g : geometries) {
@@ -336,7 +336,7 @@ public class GeometryBatchFactory {
         for (Map.Entry<Material, List<Geometry>> entry : matToGeom.entrySet()) {
             Material mat = entry.getKey();
             List<Geometry> geomsForMat = entry.getValue();
-            ConcreteMesh mesh = new ConcreteMesh();
+            Mesh mesh = new Mesh();
             mergeGeometries(geomsForMat, mesh);
             // lods
             if (useLods) {
@@ -431,7 +431,7 @@ public class GeometryBatchFactory {
     }
 
     public static void main(String[] args) {
-        ConcreteMesh mesh = new ConcreteMesh();
+        Mesh mesh = new Mesh();
         mesh.setBuffer(Type.Position, 3, new float[]{
                     0, 0, 0,
                     1, 0, 0,
@@ -450,7 +450,7 @@ public class GeometryBatchFactory {
         ArrayList<Geometry> geoms = new ArrayList<Geometry>();
         geoms.add(g1);
 
-        ConcreteMesh outMesh = new ConcreteMesh();
+        Mesh outMesh = new Mesh();
         mergeGeometries(geoms, outMesh);
         printMesh(outMesh);
     }
